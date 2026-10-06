@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsive Product Pricing Cards</title>
+<link rel="stylesheet" href="Responsive Product Pricing Cards.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>Simple pricing for every team</h1>
+    <p>Pick a plan that fits your needs. Switch to yearly billing to save more.</p>
+  </header>
+
+  <div class="billing">
+    <span id="lblMonthly" class="active">Monthly</span>
+    <button id="billingSwitch" class="switch" role="switch" aria-checked="false"
+      aria-label="Switch between monthly and yearly billing"></button>
+    <span id="lblYearly">Yearly <em class="save-tag" style="font-style:normal">Save 20%</em></span>
+  </div>
+
+  <main class="cards" id="cards"></main>
+
+  <script>
+    // Plan data (monthly price; yearly price is per month, billed once a year)
+    const plans = [
+      {
+        name: "Starter",
+        desc: "For individuals getting started.",
+        monthly: 9,
+        yearly: 7,
+        features: ["1 project", "5 GB storage", "Basic analytics", "Email support"],
+        badge: null,
+        featured: false
+      },
+      {
+        name: "Pro",
+        desc: "For growing teams that need more.",
+        monthly: 29,
+        yearly: 23,
+        features: ["10 projects", "50 GB storage", "Advanced analytics", "Priority support"],
+        badge: { text: "Popular", cls: "popular" },
+        featured: true
+      },
+      {
+        name: "Business",
+        desc: "For companies that scale fast.",
+        monthly: 59,
+        yearly: 47,
+        features: ["Unlimited projects", "500 GB storage", "Custom reports", "24/7 phone support"],
+        badge: { text: "Best Value", cls: "value" },
+        featured: false
+      }
+    ];
+
+    const cardsEl = document.getElementById("cards");
+    const switchEl = document.getElementById("billingSwitch");
+    const lblMonthly = document.getElementById("lblMonthly");
+    const lblYearly = document.getElementById("lblYearly");
+    let yearly = false;
+
+    function render() {
+      cardsEl.innerHTML = plans.map(p => {
+        const price = yearly ? p.yearly : p.monthly;
+        const billed = yearly ? `Billed $${p.yearly * 12} per year` : "Billed monthly";
+        return `
+        <article class="card ${p.featured ? "featured" : ""}">
+          ${p.badge ? `<div class="ribbon ${p.badge.cls}">${p.badge.text}</div>` : ""}
+          <h2>${p.name}</h2>
+          <p class="desc">${p.desc}</p>
+          <div class="price"><span class="amount">$${price}</span><span class="per">/ month</span></div>
+          <p class="billed">${billed}</p>
+          <ul class="features">
+            ${p.features.map(f => `<li>${f}</li>`).join("")}
+          </ul>
+          <button class="btn" onclick="choosePlan('${p.name}')">Choose ${p.name}</button>
+        </article>`;
+      }).join("");
+    }
+
+    function choosePlan(name) {
+      alert(`You selected the ${name} plan (${yearly ? "Yearly" : "Monthly"} billing).`);
+    }
+
+    switchEl.addEventListener("click", () => {
+      yearly = !yearly;
+      switchEl.setAttribute("aria-checked", yearly);
+      lblMonthly.classList.toggle("active", !yearly);
+      lblYearly.classList.toggle("active", yearly);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+
+</html>
